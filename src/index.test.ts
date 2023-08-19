@@ -1,4 +1,5 @@
 import { spawnSync } from 'child_process';
+import { addWorkingDays } from './addWorkingDays';
 
 describe('Date Calculation Script', () => {
   it.each([
@@ -150,15 +151,13 @@ describe('Date Calculation Script', () => {
         WorkdayStop: { Hours: 16, Minutes: 0 },
       });
 
-      const result = spawnSync('npx', [
-        'ts-node',
-        'src/index.ts',
-        '--json',
-        inputJSON,
-      ]);
+      const result = addWorkingDays({
+        ...input,
+        WorkdayStart: { Hours: 8, Minutes: 0 },
+        WorkdayStop: { Hours: 16, Minutes: 0 },
+      });
 
-      expect(result.stdout.toString().trim()).toContain(expected);
-      expect(result.error).toBeFalsy();
+      expect(result.toString().trim()).toEqual(expected);
     }
   );
 });
