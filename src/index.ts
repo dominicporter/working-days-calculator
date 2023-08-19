@@ -45,7 +45,7 @@ try {
   const daysDirection = increment < 0 ? -1 : 1;
   while (daysToAdd > 0) {
     currentDate = addDays(currentDate, daysDirection);
-    console.log(currentDate);
+    console.log(`cd: ${currentDate}`);
 
     // Skip weekends
     if (isWeekend(currentDate)) {
@@ -57,9 +57,19 @@ try {
 
     console.log(`ws: ${workStart}`);
     if (isBefore(currentDate, workStart)) {
-      currentDate = workStart;
+      console.log('before');
+      if (daysDirection < 0) {
+        currentDate = addDays(workEnd, -1);
+      } else {
+        currentDate = workStart;
+      }
     } else if (isAfter(currentDate, workEnd)) {
-      currentDate = addDays(workStart, 1);
+      console.log('after');
+      if (daysDirection < 0) {
+        currentDate = workEnd;
+      } else {
+        currentDate = addDays(workStart, 1);
+      }
     }
 
     daysToAdd--;
@@ -67,10 +77,7 @@ try {
     if (daysToAdd < 1 && daysToAdd > 0) {
       const hoursInWorkDay = WORK_END_HOUR - WORK_START_HOUR;
       const hoursToAdd = Math.round(hoursInWorkDay * daysToAdd);
-      currentDate = addHours(
-        currentDate,
-        hoursToAdd * daysDirection
-      );
+      currentDate = addHours(currentDate, hoursToAdd * daysDirection);
 
       daysToAdd = 0;
     }

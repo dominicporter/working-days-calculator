@@ -45,6 +45,46 @@ describe('Date Calculation Script', () => {
       },
       expected: '24-05-2004 10:15',
     },
+    {
+      input: {
+        // Start after work hours
+        StartDate: '24-05-2004 18:05',
+        Increment: 2.5,
+      },
+      expected: '27-05-2004 12:00',
+    },
+    {
+      input: {
+        // Start before work hours
+        StartDate: '24-05-2004 07:12',
+        Increment: 2.5,
+      },
+      expected: '26-05-2004 12:00',
+    },
+    {
+      input: {
+        // Start after work hours
+        StartDate: '20-05-2004 18:05',
+        Increment: -2.5,
+      },
+      expected: '18-05-2004 12:00',
+    },
+    {
+      input: {
+        // Start before work hours
+        StartDate: '20-05-2004 07:12',
+        Increment: -2.5,
+      },
+      expected: '17-05-2004 12:00',
+    },
+    {
+      input: {
+        // Start before work hours
+        StartDate: '24-05-2004 07:12',
+        Increment: -5.5,
+      },
+      expected: '14-05-2004 12:00',
+    },
   ])(
     '$input.StartDate + $input.Increment -> $expected',
     ({ input, expected }) => {
