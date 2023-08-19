@@ -72,7 +72,7 @@ describe('Date Calculation Script', () => {
     {
       input: {
         // Start before work hours
-        StartDate: '20-05-2004 07:12',
+        StartDate: '20-05-2004 07:11',
         Increment: -2.5,
       },
       expected: '17-05-2004 12:00',
@@ -85,6 +85,17 @@ describe('Date Calculation Script', () => {
         Holidays: [{ Year: 2004, Month: 5, Day: 21 }],
       },
       expected: '13-05-2004 12:00',
+    },
+    {
+      input: {
+        // Start before work hours
+        StartDate: '24-05-2004 07:13',
+        Increment: -5.5,
+        // 2 days holiday in range
+        RecurringHolidays: [{ Month: 5, Day: 19 }],
+        Holidays: [{ Year: 2004, Month: 5, Day: 21 }],
+      },
+      expected: '12-05-2004 12:00',
     },
   ])(
     '$input.StartDate + $input.Increment -> $expected',
