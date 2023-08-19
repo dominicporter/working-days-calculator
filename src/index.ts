@@ -1,5 +1,13 @@
 import yargs, { Argv } from 'yargs';
-import { addDays, set, isWeekend, isBefore, isAfter, format } from 'date-fns';
+import {
+  addDays,
+  set,
+  isWeekend,
+  isBefore,
+  isAfter,
+  format,
+  addHours,
+} from 'date-fns';
 import { parse } from 'date-fns';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
@@ -27,8 +35,6 @@ try {
   const startDate = parse(input.StartDate, dateFormat, new Date(), {
     useAdditionalWeekYearTokens: true,
   });
-  // console.log(`id: ${inputDate}`);
-  // const startDate = zonedTimeToUtc( inputDate, 'Europe/London');
 
   console.log(`sd: ${startDate}`);
   const increment = parseFloat(input.Increment);
@@ -36,8 +42,9 @@ try {
   let currentDate = startDate;
   let daysToAdd = Math.abs(increment);
   console.log(daysToAdd);
+  const daysDirection = increment < 0 ? -1 : 1;
   while (daysToAdd > 0) {
-    currentDate = addDays(currentDate, increment < 0 ? -1 : 1);
+    currentDate = addDays(currentDate, daysDirection);
     console.log(currentDate);
 
     // Skip weekends
@@ -56,6 +63,17 @@ try {
     }
 
     daysToAdd--;
+
+    if (daysToAdd < 1 && daysToAdd > 0) {
+      const hoursInWorkDay = WORK_END_HOUR - WORK_START_HOUR;
+      const hoursToAdd = Math.round(hoursInWorkDay * daysToAdd);
+      currentDate = addHours(
+        currentDate,
+        hoursToAdd * daysDirection
+      );
+
+      daysToAdd = 0;
+    }
   }
 
   const formattedResult = format(currentDate, 'dd-MM-yyyy HH:mm');
