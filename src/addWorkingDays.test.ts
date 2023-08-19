@@ -1,4 +1,3 @@
-import { spawnSync } from 'child_process';
 import { addWorkingDays } from './addWorkingDays';
 
 describe('Date Calculation Script', () => {
