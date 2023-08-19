@@ -1,4 +1,4 @@
-import yargs, { Argv } from 'yargs';
+import yargs from 'yargs';
 import {
   addDays,
   set,
@@ -7,12 +7,10 @@ import {
   isAfter,
   format,
   addHours,
+  isSameDay,
 } from 'date-fns';
 import { parse } from 'date-fns';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
-const WORK_START_HOUR = 8;
-const WORK_END_HOUR = 16;
 const WORK_WEEKDAYS = [1, 2, 3, 4, 5]; // Monday to Friday
 
 const argv = yargs(process.argv.slice(2)).options({
@@ -38,22 +36,33 @@ try {
 
   console.log(`sd: ${startDate}`);
   const increment = parseFloat(input.Increment);
+  const workdayStartHours = input.WorkdayStart.Hours;
+  const workdayStartMinutes = input.WorkdayStart.Minutes;
+  const workdayStopHours = input.WorkdayStop.Hours;
+  const workdayStopMinutes = input.WorkdayStop.Minutes;
+  const hoursInWorkDay = workdayStopHours - workdayStartHours;
+  const daysDirection = increment < 0 ? -1 : 1;
+  const holidays = input.Holidays || [];
 
   let currentDate = startDate;
   let daysToAdd = Math.abs(increment);
-  console.log(daysToAdd);
-  const daysDirection = increment < 0 ? -1 : 1;
   while (daysToAdd > 0) {
     currentDate = addDays(currentDate, daysDirection);
     console.log(`cd: ${currentDate}`);
 
     // Skip weekends
-    if (isWeekend(currentDate)) {
+    if (isHoliday(currentDate, holidays) || isWeekend(currentDate)) {
       continue;
     }
 
-    const workStart = set(currentDate, { hours: WORK_START_HOUR, minutes: 0 });
-    const workEnd = set(currentDate, { hours: WORK_END_HOUR, minutes: 0 });
+    const workStart = set(currentDate, {
+      hours: workdayStartHours,
+      minutes: workdayStartMinutes,
+    });
+    const workEnd = set(currentDate, {
+      hours: workdayStopHours,
+      minutes: workdayStopMinutes,
+    });
 
     console.log(`ws: ${workStart}`);
     if (isBefore(currentDate, workStart)) {
@@ -75,7 +84,6 @@ try {
     daysToAdd--;
 
     if (daysToAdd < 1 && daysToAdd > 0) {
-      const hoursInWorkDay = WORK_END_HOUR - WORK_START_HOUR;
       const hoursToAdd = Math.round(hoursInWorkDay * daysToAdd);
       currentDate = addHours(currentDate, hoursToAdd * daysDirection);
 
@@ -88,4 +96,10 @@ try {
   console.log(formattedResult);
 } catch (error: any) {
   console.error('Error processing JSON:', error.message);
+}
+
+function isHoliday(date: Date, holidays: any[]): boolean {
+  return holidays.some((holiday) =>
+    isSameDay(date, new Date(holiday.Year, holiday.Month - 1, holiday.Day))
+  );
 }

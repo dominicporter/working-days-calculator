@@ -82,13 +82,18 @@ describe('Date Calculation Script', () => {
         // Start before work hours
         StartDate: '24-05-2004 07:12',
         Increment: -5.5,
+        Holidays: [{ Year: 2004, Month: 5, Day: 21 }],
       },
-      expected: '14-05-2004 12:00',
+      expected: '13-05-2004 12:00',
     },
   ])(
     '$input.StartDate + $input.Increment -> $expected',
     ({ input, expected }) => {
-      const inputJSON = JSON.stringify(input);
+      const inputJSON = JSON.stringify({
+        ...input,
+        WorkdayStart: { Hours: 8, Minutes: 0 },
+        WorkdayStop: { Hours: 16, Minutes: 0 },
+      });
 
       const result = spawnSync('npx', [
         'ts-node',
