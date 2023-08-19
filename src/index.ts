@@ -8,6 +8,7 @@ import {
   format,
   addHours,
   isSameDay,
+  addMinutes,
 } from 'date-fns';
 import { parse } from 'date-fns';
 
@@ -63,8 +64,10 @@ try {
       currentDate = addDays(currentDate, daysDirection);
     } else {
       console.log(`partialDay: ${daysToAdd}`);
-      const hoursToAdd = Math.round(hoursInWorkDay * daysToAdd);
-      currentDate = addHours(currentDate, hoursToAdd * daysDirection);
+      const hoursToAdd = hoursInWorkDay * daysToAdd;
+      const minutesToAdd = hoursToAdd * 60;
+
+      currentDate = addMinutes(currentDate, minutesToAdd * daysDirection);
 
       daysToAdd = 0;
     }
