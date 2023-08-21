@@ -144,16 +144,10 @@ describe('Date Calculation Script', () => {
   ])(
     '$input.StartDate + $input.Increment -> $expected',
     ({ input, expected }) => {
-      const inputJSON = JSON.stringify({
-        ...input,
-        WorkdayStart: { Hours: 8, Minutes: 0 },
-        WorkdayStop: { Hours: 16, Minutes: 0 },
-      });
-
       const result = addWorkingDays({
-        ...input,
         WorkdayStart: { Hours: 8, Minutes: 0 },
         WorkdayStop: { Hours: 16, Minutes: 0 },
+        ...input,
       });
 
       expect(result.toString().trim()).toEqual(expected);
